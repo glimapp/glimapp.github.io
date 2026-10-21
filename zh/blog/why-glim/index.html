@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>为什么做 Glim：少装几个查看文件的 App — Glim</title><meta name="description" content="用 Rust、GPUI 和 macOS 原生预览做一个多格式文件查看器，说明实现取舍、基础编辑和格式边界。"><meta name="theme-color" content="#f6f6f0"><link rel="icon" href="https://raw.githubusercontent.com/glimapp/glim/main/assets/branding/glim.svg"><link rel="canonical" href="https://glimapp.github.io/zh/blog/why-glim/"><link rel="alternate" hreflang="en" href="https://glimapp.github.io/blog/why-glim/"><link rel="alternate" hreflang="zh-CN" href="https://glimapp.github.io/zh/blog/why-glim/"><link rel="alternate" hreflang="x-default" href="https://glimapp.github.io/blog/why-glim/"><meta name="robots" content="index,follow,max-image-preview:large"><meta property="og:type" content="article"><meta property="og:site_name" content="Glim"><meta property="og:url" content="https://glimapp.github.io/zh/blog/why-glim/"><meta property="og:title" content="为什么做 Glim：少装几个查看文件的 App"><meta property="og:description" content="用 Rust、GPUI 和 macOS 原生预览做一个多格式文件查看器，说明实现取舍、基础编辑和格式边界。"><meta property="og:image" content="https://raw.githubusercontent.com/glimapp/glim/v0.2.7/assets/readme/workspace.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="为什么做 Glim：少装几个查看文件的 App"><meta name="twitter:description" content="用 Rust、GPUI 和 macOS 原生预览做一个多格式文件查看器，说明实现取舍、基础编辑和格式边界。"><meta name="twitter:image" content="https://raw.githubusercontent.com/glimapp/glim/v0.2.7/assets/readme/workspace.png"><link rel="stylesheet" href="/blog/article.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "为什么做 Glim：少装几个查看文件的 App", "description": "用 Rust、GPUI 和 macOS 原生预览做一个多格式文件查看器，说明实现取舍、基础编辑和格式边界。", "datePublished": "2026-10-21", "dateModified": "2026-10-21", "inLanguage": "zh-CN", "url": "https://glimapp.github.io/zh/blog/why-glim/", "mainEntityOfPage": "https://glimapp.github.io/zh/blog/why-glim/", "author": {"@type": "Organization", "name": "Glim", "url": "https://glimapp.github.io/"}, "image": "https://raw.githubusercontent.com/glimapp/glim/v0.2.7/assets/readme/workspace.png"}</script></head><body><header><a class="brand" href="/zh/">Glim<span style="color:var(--green)">.</span></a><nav><a href="/zh/">首页</a><a href="https://github.com/glimapp/glim">GitHub ↗</a><a class="language" href="/blog/why-glim/" lang="en" hreflang="en">English</a></nav></header><main><article class="article"><p class="eyebrow">开发笔记</p><h1>为什么做 Glim：少装几个查看文件的 App</h1><p class="dek">用 Rust、GPUI 和 macOS 原生预览做一个多格式文件查看器，说明实现取舍、基础编辑和格式边界。</p><p class="meta"><time datetime="2026-10-21">2026-10-21</time> · Glim · 基于 v0.2.7</p><p>Agent 做完一项任务，留下 Markdown 报告、JSON 响应、CSV 导出，还有几张截图。要检查这些产出，往往得打开编辑器、表格软件、图片查看器，再找个能渲染 Markdown 的工具。文件都在同一个目录里，查看它们的 App 却散在各处。</p>
+<p>我们做 Glim，就是想少一点这样的切换：在一个 Mac App 里打开这些文件，直接看内容。适合阅读的文档就渲染出来，需要核对细节时就看源码，碰到一个错别字或配置值，也能顺手改掉。</p>
+<p>AI 让这种需求变得更常见，但文件不必来自 Agent。下载的数据集、项目目录、参考文档，也会遇到同样的问题。</p>
+<figure><img src="https://raw.githubusercontent.com/glimapp/glim/v0.2.7/assets/readme/workspace.png" alt="Glim 工作空间：文件侧栏、文档标签页和渲染后的 Markdown" width="3420" height="2016" loading="lazy"><figcaption>文件共享同一个工作空间，内容交给对应的阅读器。截图来自项目文档。</figcaption></figure>
+<h2>统一工作空间，保留格式差异</h2>
+<p>PDF 和 JSON 不需要相同的界面。值得统一的是打开文件、标签页、导航、搜索，以及查看操作出现的位置。内容区域则应该按照文件格式来组织。</p>
+<ul><li>Markdown 渲染正文、图表和公式，也保留源码视图。</li><li>JSON 提供可展开的树；CSV、TSV 提供表格视图，并可回到原始内容。</li><li>PDF、图片和支持的 Office 文档使用各自的预览方式。</li><li>SQLite 提供用于浏览本地数据表的只读快照，不承担数据库管理控制台的职责。</li></ul>
+<p>“支持一种格式”需要讲清具体能力。CSV 表格视图没有电子表格的计算引擎；Office 预览不能保证原应用的完整排版，也不能代替编辑；EPUB 阅读也有出版商 CSS 和固定版式方面的限制。我们把这些差异写进了<a href="https://github.com/glimapp/glim/blob/v0.2.7/docs/file-format-support.zh-CN.md">格式支持说明</a>，方便下载前核对。</p>
+<h2>为什么选择 Rust 和 GPUI</h2>
+<p>Rust 的所有权机制、明确的数据结构和编译检查，有助于管理文件缓冲区、后台任务和阅读器状态的生命周期。用 Agent 辅助开发时，编译器也能给每一轮修改提供具体约束。当然，编译通过不代表解析一定正确、保存一定安全，更不代表界面交互已经验证过。</p>
+<p>GPUI 和 GPUI Kit 负责工作空间、标签页、文件导航和共享控件。阅读器实体会跨渲染保留，界面重绘时不需要重新建立整份阅读状态。</p>
+<p>代码按一个简单的依赖方向划分：</p><pre><code>glim-app → glim-services → glim-core
+     └──────────────────→ glim-core</code></pre>
+<p>core 管理数据和解析逻辑，不依赖 GPUI，也不做 I/O；services 处理文件系统、文件监听和格式处理，不引入界面；app 展示结果并协调交互。阻塞式文件操作放到后台执行器，渲染方法使用已有状态，不在重绘时扫描目录或执行命令。</p>
+<aside>Rust 和 GPUI 是实现选择。我们目前没有可复现的同类产品内存、启动时间对照实验，因此这里不宣称“内存更少”或“打开更快”。这类结论需要同一设备、同一文件和明确的测量方法。</aside>
+<h2>macOS 已经有的能力，就接进来</h2>
+<p>Glim 将 Rust／GPUI 工作空间与 Swift／AppKit 阅读器组合使用。PDF 展示交给 PDFKit，图片准备使用 ImageIO，部分文档渲染使用 WebKit。这些视图嵌在同一个工作空间里，不必为每种格式再打开一个独立应用窗口。</p>
+<p>这样可以复用平台已有的阅读能力，也要接受平台边界：Office 排版和媒体编解码支持取决于 macOS；原生视图的生命周期、焦点和操作，需要与 GPUI 外层协调。</p>
+<p>阅读器的操作通过共享 action 定义，再用于工具栏和内容菜单。不同格式可以提供自己有顺序的控件，无需各自维护一套互相偏离的菜单规则。更具体的职责划分见<a href="https://github.com/glimapp/glim/blob/v0.2.7/docs/architecture.zh-CN.md">架构文档</a>。</p>
+<h2>大文件要换一种读法</h2>
+<p>先把整个文件读进内存，再考虑如何显示，并不适合作为查看器的默认策略。Glim 的非 Git 阅读器采用流式读取、分页、受控的内容投影和按需解码。很大的文本可以分页阅读；图片预览可以先准备缩略图，避免在 Rust 缓冲区里解码整张原图。</p>
+<p>文件总大小与当前正在处理的数据量，需要分别考虑。渲染投影、解码缓冲区可以有预算，同时通过回退视图保留对原始内容的访问。这不代表每种格式都能无限制地完整渲染，各条路径的策略也有差别；Git／diff 处理仍有单独的约束。</p>
+<p>应用层的阅读预算集中在<a href="https://github.com/glimapp/glim/blob/v0.2.7/assets/reader-limits.json">一份共享策略文件</a>里，生成 Rust、Swift 和图表渲染需要的值。<a href="https://github.com/glimapp/glim/blob/v0.2.7/docs/reader-limits.zh-CN.md">阅读策略说明</a>记录了这些预算分别影响什么。</p>
+<h2>保留基础编辑，说明只读边界</h2>
+<p>检查产出时，有时需要改一个字或调整一个值。普通 UTF-8 文件支持基础编辑、撤销重做、自动保存和显式保存。大型分页文本、图片、diff 和文档预览仍然只读。我们不打算为这个查看场景引入 LSP、插件市场或完整 IDE 工作流。</p>
+<p>源码中也有 Git 工作空间能力，不过本文对应版本的 Git 导航入口处于隐藏状态，因此这里不把它当作下载安装后的主要体验来介绍。</p>
+<h2>用一个已有的目录试试</h2>
+<p>找一个包含 README、数据文件、PDF 或图片的小项目目录，看看把它们放在同一个窗口里，是否能减少你平时的来回切换。如果缺少某种格式，或某个文件预览有问题，一份可以公开分享的样例，比笼统地说“支持所有格式”更有助于改进。</p>
+<p>Glim 免费、采用 MIT 许可，目前维护 macOS Apple Silicon 和 Intel 两个平台版本。DMG 使用临时签名，尚未经过 Apple 公证；首次启动被系统拦截时，请按发布页中的安装说明处理。原生预览有格式边界，Glim 不提供完整的 Office 编辑，也不能覆盖所有专业软件的用途。</p>
+<div class="actions"><a class="button primary" href="https://github.com/glimapp/glim/releases/latest">下载 Mac 版 ↗</a><a class="button" href="https://github.com/glimapp/glim">查看源码 ↗</a></div>
+<p class="end">技术依据：<a href="https://github.com/glimapp/glim/blob/v0.2.7/docs/architecture.zh-CN.md">架构</a>、<a href="https://github.com/glimapp/glim/blob/v0.2.7/docs/file-format-support.zh-CN.md">格式支持</a>、<a href="https://github.com/glimapp/glim/blob/v0.2.7/docs/reader-limits.zh-CN.md">阅读策略</a>。链接固定在本文依据的 v0.2.7，避免后续实现变化影响上下文。</p></article></main><footer><span>Glim · MIT · macOS</span><a href="/zh/">返回 Glim 官网 ↗</a></footer></body></html>
