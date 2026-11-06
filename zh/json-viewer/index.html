@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mac JSON 查看器：树视图与原文 | Glim</title>
+<meta name="description" content="在 Mac 上用可展开的只读树查看 JSON，并切换 UTF-8 原文编辑。附 JSON、JSONC、JSON5、JSONL 的支持边界与下载样例。">
+<meta name="theme-color" content="#f6f6f0"><meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="icon" href="https://raw.githubusercontent.com/glimapp/glim/main/assets/branding/glim.svg">
+<link rel="canonical" href="https://glimapp.github.io/zh/json-viewer/">
+<link rel="alternate" hreflang="en" href="https://glimapp.github.io/json-viewer/">
+<link rel="alternate" hreflang="zh-CN" href="https://glimapp.github.io/zh/json-viewer/">
+<link rel="alternate" hreflang="x-default" href="https://glimapp.github.io/json-viewer/">
+<meta property="og:type" content="article"><meta property="og:site_name" content="Glim">
+<meta property="og:url" content="https://glimapp.github.io/zh/json-viewer/"><meta property="og:title" content="Mac JSON 查看器：树视图与原文 | Glim">
+<meta property="og:description" content="在 Mac 上用可展开的只读树查看 JSON，并切换 UTF-8 原文编辑。附 JSON、JSONC、JSON5、JSONL 的支持边界与下载样例。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://glimapp.github.io/assets/demo-json.webp"><meta property="og:image:alt" content="Glim macOS file workspace">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Mac JSON 查看器：树视图与原文 | Glim">
+<meta name="twitter:description" content="在 Mac 上用可展开的只读树查看 JSON，并切换 UTF-8 原文编辑。附 JSON、JSONC、JSON5、JSONL 的支持边界与下载样例。"><meta name="twitter:image" content="https://glimapp.github.io/assets/demo-json.webp">
+<link rel="stylesheet" href="/assets/site.css"><script defer src="/assets/analytics.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Mac JSON 查看器：树视图与原文 | Glim", "description": "在 Mac 上用可展开的只读树查看 JSON，并切换 UTF-8 原文编辑。附 JSON、JSONC、JSON5、JSONL 的支持边界与下载样例。", "inLanguage": "zh-CN", "mainEntityOfPage": "https://glimapp.github.io/zh/json-viewer/", "image": "https://glimapp.github.io/assets/demo-json.webp", "author": {"@type": "Organization", "name": "Glim", "url": "https://glimapp.github.io"}}</script>
+</head><body><header><a class="brand" href="/zh/" aria-label="Glim 首页">Glim.</a><nav><a class="docs" href="/zh/guide/">使用指南</a><a href="https://github.com/glimapp/glim" data-placement="header">GitHub</a><a class="language" href="/json-viewer/" lang="en" hreflang="en">English</a></nav></header><main class="reader-page"><article><h1>在 Mac 上看 JSON</h1><p class="lead">导出的响应或配置文件有清晰层级后，更容易检查对象与数组；也可以把它和说明文档放在相邻标签中。</p><div class="actions"><a class="button" href="https://github.com/glimapp/glim/releases/latest" data-placement="scenario-hero">下载 Mac 版</a><a href="#sample">下载样例</a></div><p class="note">免费开源 · Apple Silicon 与 Intel · macOS 11 或更新版本。尚未经过 Apple 公证。</p><figure><img src="/assets/demo-json.webp" width="1710" height="780" fetchpriority="high" alt="Glim JSON 树显示样例工作空间对象与 targets 数组。"><figcaption>Glim JSON 树显示样例工作空间对象与 targets 数组。</figcaption></figure><section><h2>打开树视图</h2><p>按 <strong>⌘O</strong> 打开 JSON 文件，或按 <strong>⌘⇧O</strong> 打开它所在的文件夹。在工具栏选择 <strong>JSON 树</strong>，展开对象查看键，展开数组查看各项；暂时不看的分支可以收起。</p><p>树视图保持只读，分支按需加载。查看本地嵌套配置不需要先粘贴到在线服务。</p></section><section id="sample"><h2>检查这份样例</h2><p>下载下面的 <code>settings.json</code>，展开 <code>workspace</code> 查看文件列表和预览设置，再展开 <code>targets</code> 查看两种 Mac 架构。这些是演示用配置值，不是测量数据或在线服务响应。</p><pre><code>{
+  &quot;workspace&quot;: {
+    &quot;files&quot;: [&quot;report.md&quot;, &quot;releases.csv&quot;],
+    &quot;preview&quot;: {&quot;markdown&quot;: true, &quot;diagrams&quot;: &quot;Mermaid&quot;}
+  }
+}</code></pre><p><a href="/assets/examples/settings.json" download>下载 settings.json</a></p></section><section><h2>核对原始文本</h2><p>需要检查空白、注释或精确的值时，切到<strong>原文</strong>。普通 UTF-8 原文支持基本编辑、撤销与重做、自动保存和 <strong>⌘S</strong>。自动保存直接写回原文件，试改时请使用副本；树视图本身不修改 JSON。</p><p>可以把 Markdown 说明与 CSV 导出记录放在同一工作空间。标题栏搜索用于按名称或路径找文件，不是 JSON 记录查询语言。</p></section><section><h2>JSON 系列的边界</h2><p>支持的文件系列包括 JSON、JSONC、JSON5、NDJSON／JSONL、GeoJSON 与 notebook 结构。JSONC 支持注释和尾逗号，逐行 JSON 会投影为记录数组。查看 GeoJSON 不会显示地图，notebook 也不会执行。</p><p>需要 Schema 校验、数据查询或运行代码时，应使用对应的验证器、查询工具或编程环境。Glim 主要用于阅读本地结构和原文。文件在本地打开，但更新、已启用的使用统计及其他阅读器的网络资源可能联网。</p></section><section class="download"><h2>在自己的文件上试试</h2><p>下载适合 Mac 架构的 DMG，将 Glim 拖入“应用程序”。如首次启动被拦截，确认来源后按安装指南在系统设置中批准。</p><p><a class="button" href="https://github.com/glimapp/glim/releases/latest" data-placement="scenario-end">下载 Mac 版</a></p><p><a href="/zh/#download">安装说明</a> · <a href="https://github.com/glimapp/glim/blob/main/docs/file-format-support.zh-CN.md">格式支持</a> · <a href="https://github.com/glimapp/glim/blob/main/docs/privacy.zh-CN.md">隐私与网络</a></p></section><section><h2>相关阅读</h2><div class="related"><a href="/zh/markdown-viewer/">Markdown 与 Mermaid</a><a href="/zh/csv-viewer/">CSV 表格</a><a href="/zh/blog/why-glim/">为什么做 Glim</a></div></section></article></main><footer><span>Glim，免费的开源 Mac 文件查看器。</span><div><a href="https://github.com/glimapp/glim/issues/new/choose">反馈问题</a> · <a href="https://github.com/glimapp/glim/blob/main/docs/privacy.zh-CN.md">隐私与网络</a> · <a href="https://github.com/glimapp/glim/blob/main/LICENSE">MIT</a></div><p class="site-privacy">官网使用 Google Analytics 统计访问；尊重浏览器的 Do Not Track 设置。 <a href="https://policies.google.com/privacy">Google 隐私政策</a></p></footer></body></html>

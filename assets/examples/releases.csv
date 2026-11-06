@@ -1,0 +1,5 @@
+version,channel,architecture,status,notes
+0.2.24,stable,Apple Silicon,available,"Review notes, then open the DMG"
+0.2.24,stable,Intel,available,Choose the matching installer
+0.2.23,previous,Apple Silicon,archived,Sample record
+0.2.23,previous,Intel,archived,Sample record

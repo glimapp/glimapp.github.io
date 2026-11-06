@@ -1,0 +1,24 @@
+{
+  "project": "Release review",
+  "workspace": {
+    "files": [
+      "report.md",
+      "releases.csv"
+    ],
+    "preview": {
+      "markdown": true,
+      "diagrams": "Mermaid"
+    }
+  },
+  "targets": [
+    {
+      "architecture": "Apple Silicon",
+      "asset": "macos-arm64.dmg"
+    },
+    {
+      "architecture": "Intel",
+      "asset": "macos-x86_64.dmg"
+    }
+  ],
+  "notes": "Sample configuration for the walkthrough"
+}
